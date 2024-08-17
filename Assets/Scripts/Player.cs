@@ -35,6 +35,8 @@ public class Player : NetworkBehaviour
         FindObjectOfType<MoveCamera>().cameraTarget = cameraTarget;
         FindObjectOfType<PlayerCamera>().orientation = cameraOrientation;
         FindObjectOfType<PlayerCamera>().input = input;
+        FindAnyObjectByType<GameManager>().player = this;
+        FindAnyObjectByType<GameManager>().ResetPlayer();
     }
 
     private void Start()
@@ -54,7 +56,7 @@ public class Player : NetworkBehaviour
 
         bool jumpInput = input.GetJumpInput();
 
-        isGrounded = Physics.Raycast(transform.position + Vector3.up * .1f, Vector3.down, .3f, groundLayer);
+        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one/4, Vector3.down, Quaternion.identity, .275f, groundLayer);
 
         if (isGrounded)
         {
@@ -71,6 +73,12 @@ public class Player : NetworkBehaviour
         else rb.AddForce(moveDirection * moveSpeed * groundMultiplier * airMultiplier, ForceMode.Force);
         SpeedControl();
     }
+    public void TeleportPlayer(Vector3 location)
+    {
+        rb.MovePosition(location);
+        //transform.position = location;
+    }
+
     private void SpeedControl()
     {
         Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);

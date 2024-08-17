@@ -352,6 +352,7 @@ MonoBehaviour:
   cameraTarget: {fileID: 5974889651538143187}
   moveSpeed: 7
   groundDrag: 5
+  groundMultiplier: 10
   jumpForce: 8
   jumpCooldown: 0.25
   airMultiplier: 0.4
