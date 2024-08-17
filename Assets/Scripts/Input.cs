@@ -20,6 +20,12 @@ public class Input : MonoBehaviour
         Debug.Log("Movement: " + inputVector);
         return inputVector;
     }
+    public bool GetDashInput()
+    {
+        bool sprintInput = playerInputActions.Player.Sprint.WasPerformedThisFrame();
+        Debug.Log("Sprint: " + sprintInput);
+        return sprintInput;
+    }
     public bool GetJumpInput()
     {
         bool jumpInput = playerInputActions.Player.Jump.WasPerformedThisFrame();
