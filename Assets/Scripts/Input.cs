@@ -17,25 +17,21 @@ public class Input : MonoBehaviour
     public Vector2 GetMovementVectorNormalized()
     {
         Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>().normalized;
-        Debug.Log("Movement: " + inputVector);
         return inputVector;
     }
     public bool GetDashInput()
     {
-        bool sprintInput = playerInputActions.Player.Sprint.WasPerformedThisFrame();
-        Debug.Log("Sprint: " + sprintInput);
+        bool sprintInput = playerInputActions.Player.Sprint.IsPressed();
         return sprintInput;
     }
     public bool GetJumpInput()
     {
-        bool jumpInput = playerInputActions.Player.Jump.WasPerformedThisFrame();
-        Debug.Log("Jump: " + jumpInput);
+        bool jumpInput = playerInputActions.Player.Jump.IsPressed();
         return jumpInput;
     }
     public Vector2 GetMouseDelta()
     {
         Vector2 mouseDelta = playerInputActions.Player.Aim.ReadValue<Vector2>();
-        Debug.Log("Aim: " + mouseDelta);
         return mouseDelta;
     }
 }

@@ -20,6 +20,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float groundMultiplier = 10;
     private Vector3 moveDirection;
 
+    [SerializeField] private float downForce = 20f;
     [SerializeField] private float jumpForce = 30f;
     [SerializeField] private float jumpCooldown = 1;
     [SerializeField] float airMultiplier = 2;
@@ -63,68 +64,88 @@ public class Player : NetworkBehaviour
         isWalking = moveInput != Vector2.zero;
         if (isWalking) AttemptMove(moveInput);
         rb.AddForce(Vector3.down * downForce, ForceMode.Force);
-        if (input.GetDashInput())
-        {
-            rb.velocity = Vector3.zero;
-            rb.AddForce(FindObjectOfType<PlayerCamera>().transform.forward * jumpForce, ForceMode.Impulse);
-        }   
+        //if (input.GetDashInput())
+        //{
+        //    rb.velocity = Vector3.zero;
+        //    rb.AddForce(FindObjectOfType<PlayerCamera>().transform.forward * jumpForce, ForceMode.Impulse);
+        //}
     }
-    [SerializeField] float downForce;
     private void Update()
     {
         if (!IsOwner) return;
 
         StateHandler();
 
-        bool jumpInput = input.GetJumpInput();
-
-        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one/4, Vector3.down, Quaternion.identity, .275f, groundLayer);
-
-        if (isGrounded)
-        {
-            if (jumpInput && readyToJump) AttempJump();
-            rb.drag = groundDrag;
-        }
-        else rb.drag = 0;
-
-
-
-
+        GroundCheck();
 
     }
+
+    [SerializeField] float floatHeight = .5f;
+    [SerializeField] float floatForce = 100;
+    void GroundCheck()
+    {
+        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .75f, groundLayer);
+        if (isGrounded)
+        {
+            float diff = floatHeight - hit.distance;
+            rb.AddForce(Vector3.up * diff * floatForce, ForceMode.Force);
+        }
+
+
+        bool jumpInput = input.GetJumpInput();
+        if (!jumpInput) downForce = 10;
+        if (isGrounded)
+        {
+            if (jumpInput && readyToJump) AttemptJump();
+            downForce = 10;
+            rb.drag = groundDrag;
+        }
+        else
+        {
+            if (jumpInput && rb.velocity.y > 0) downForce = .5f;
+            else downForce = 10;
+            rb.drag = 1;
+        }
+    }
+
     private void StateHandler()
     {
-        if(isGrounded)
+        if (isGrounded && input.GetDashInput())
         {
             state = MovementState.sprinting;
             moveSpeed = runSpeed;
         }
+        else if (isGrounded)
+        {
+            state = MovementState.walking;
+            moveSpeed = walkSpeed;
+        }
         else
         {
             state = MovementState.air;
-            moveSpeed = walkSpeed;
         }
     }
     private void AttemptMove(Vector2 moveInput)
     {
         moveDirection = cameraOrientation.forward * moveInput.y + cameraOrientation.right * moveInput.x;
-        //rb.useGravity = !OnSlope();
-        if (OnSlope()) rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
-        if (isGrounded) rb.AddForce(moveDirection * moveSpeed * groundMultiplier, ForceMode.Force);
-        else rb.AddForce(moveDirection * moveSpeed * groundMultiplier * airMultiplier, ForceMode.Force);
+        bool isMovingBackwards = Vector3.Dot(moveDirection, cameraOrientation.forward) < -.5f;
+        float backwardsMultiplier = isMovingBackwards ? .25f : 1;
+        if (OnSlope()) rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f * backwardsMultiplier, ForceMode.Force);
+        if (isGrounded) rb.AddForce(moveDirection * moveSpeed * groundMultiplier * backwardsMultiplier, ForceMode.Force);
+        else rb.AddForce(moveDirection * moveSpeed * airMultiplier, ForceMode.Force);
         SpeedControl();
     }
     public void TeleportPlayer(Vector3 location)
     {
         rb.MovePosition(location);
-        //transform.position = location;
     }
 
     private void SpeedControl()
     {
         if (OnSlope())
-        { 
-            if(rb.velocity.magnitude > moveSpeed)
+        {
+            Debug.Log("ONSLOPEEE");
+            if (rb.velocity.magnitude > moveSpeed)
             {
                 rb.velocity = rb.velocity.normalized * moveSpeed;
             }
@@ -139,11 +160,12 @@ public class Player : NetworkBehaviour
             }
         }
     }
-    private void AttempJump()
+    private void AttemptJump()
     {
         readyToJump = false;
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        Debug.Log("Jump");
         Invoke(nameof(ResetJump), jumpCooldown);
     }
     private void ResetJump()
@@ -153,7 +175,7 @@ public class Player : NetworkBehaviour
 
     private bool OnSlope()
     {
-        if(Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one/4, Vector3.down, out slopeHit, Quaternion.identity, .5f, groundLayer))
+        if (Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out slopeHit, Quaternion.identity, .5f, groundLayer))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             Debug.Log("SLOPE" + angle);
