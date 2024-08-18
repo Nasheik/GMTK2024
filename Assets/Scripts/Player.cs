@@ -60,6 +60,7 @@ public class Player : NetworkBehaviour
     }
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
         Vector2 moveInput = input.GetMovementVectorNormalized();
         isWalking = moveInput != Vector2.zero;
         if (isWalking) AttemptMove(moveInput);
@@ -69,36 +70,42 @@ public class Player : NetworkBehaviour
         //    rb.velocity = Vector3.zero;
         //    rb.AddForce(FindObjectOfType<PlayerCamera>().transform.forward * jumpForce, ForceMode.Impulse);
         //}
-    }
-    private void Update()
-    {
-        if (!IsOwner) return;
 
-        StateHandler();
-
-        GroundCheck();
-
-    }
-
-    [SerializeField] float floatHeight = .5f;
-    [SerializeField] float floatForce = 100;
-    void GroundCheck()
-    {
-        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .75f, groundLayer);
-        if (isGrounded)
+        bool shouldFloat = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .75f, groundLayer);
+        if (shouldFloat)
         {
             float diff = floatHeight - hit.distance;
             rb.AddForce(Vector3.up * diff * floatForce, ForceMode.Force);
         }
 
+        StateHandler();
 
+        GroundCheck();
+    }
+
+    [SerializeField] float floatHeight = .5f;
+    [SerializeField] float floatForce = 100;
+    [SerializeField] float coyoteTime = .2f;
+    float timeAtLastGround;
+    Vector3 positionAtLastGround;
+    void GroundCheck()
+    {
+        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, Quaternion.identity, .5f, groundLayer);
         bool jumpInput = input.GetJumpInput();
         if (!jumpInput) downForce = 10;
+
+        if (!isGrounded && timeAtLastGround + coyoteTime > Time.time && jumpInput && readyToJump)
+        {
+            AttemptJump();
+        }
+
         if (isGrounded)
         {
             if (jumpInput && readyToJump) AttemptJump();
             downForce = 10;
             rb.drag = groundDrag;
+            timeAtLastGround = Time.time;
+            positionAtLastGround = transform.position;
         }
         else
         {
