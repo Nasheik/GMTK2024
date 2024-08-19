@@ -362,7 +362,7 @@ MonoBehaviour:
   input: {fileID: 0}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 448
+    m_Bits: 1472
   state: 0
   checkpoint: {fileID: 0}
   floatHeight: 0.5

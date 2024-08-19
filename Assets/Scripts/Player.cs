@@ -62,6 +62,7 @@ public class Player : NetworkBehaviour
     {
         if (!IsOwner) return;
         Vector2 moveInput = input.GetMovementVectorNormalized();
+        if (isOnIce) moveInput = Vector2.zero;
         isWalking = moveInput != Vector2.zero;
         if (isWalking) AttemptMove(moveInput);
         rb.AddForce(Vector3.down * downForce, ForceMode.Force);
@@ -88,11 +89,13 @@ public class Player : NetworkBehaviour
     [SerializeField] float coyoteTime = .2f;
     float timeAtLastGround;
     Vector3 positionAtLastGround;
+    bool isOnIce;
     void GroundCheck()
     {
         isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .5f, groundLayer);
         bool isOnMountain = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Mountain");
         bool isOnSlime = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Slime");
+        isOnIce = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Ice");
 
         bool jumpInput = input.GetJumpInput();
 
@@ -100,14 +103,20 @@ public class Player : NetworkBehaviour
         {
             jumpInput = false;
             isGrounded = false;
-            rb.AddForce(3 * downForce * Vector3.down , ForceMode.Force);
+            rb.AddForce(3 * downForce * Vector3.down, ForceMode.Force);
             rb.AddForce(10 * downForce * hit.normal, ForceMode.Force);
         }
-        if(isOnSlime)
+        if (isOnSlime)
         {
             jumpInput = false;
             rb.AddForce(3 * jumpForce * hit.normal, ForceMode.Impulse);
         }
+        if (isOnIce)
+        {
+            jumpInput = false;
+            rb.AddForce(30 * jumpForce * hit.transform.right, ForceMode.Force);
+        }
+
 
         if (!jumpInput) downForce = 10;
 
