@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Multiplayer.Tools.NetStatsMonitor.Implementation;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -27,7 +26,7 @@ public class Player : NetworkBehaviour
     [SerializeField] float airMultiplier = 2;
     private bool readyToJump;
 
-    public Input input;
+    [SerializeField] private Input input;
 
     [SerializeField] private LayerMask groundLayer;
     private bool isGrounded;
@@ -91,16 +90,33 @@ public class Player : NetworkBehaviour
     Vector3 positionAtLastGround;
     void GroundCheck()
     {
-        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, Quaternion.identity, .5f, groundLayer);
+        isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .5f, groundLayer);
+        bool isOnMountain = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Mountain");
+        bool isOnSlime = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Slime");
+
         bool jumpInput = input.GetJumpInput();
+
+        if (isOnMountain)
+        {
+            jumpInput = false;
+            isGrounded = false;
+            rb.AddForce(Vector3.down * downForce * 10 , ForceMode.Force);
+            rb.AddForce(hit.normal * downForce * 30, ForceMode.Force);
+        }
+        if(isOnSlime)
+        {
+            rb.AddForce(hit.normal * jumpForce * 3, ForceMode.Impulse);
+        }
+
         if (!jumpInput) downForce = 10;
+
 
         if (!isGrounded && timeAtLastGround + coyoteTime > Time.time && jumpInput && readyToJump)
         {
             AttemptJump();
         }
 
-        if (isGrounded && !activeGrapple)
+        if (isGrounded)
         {
             if (jumpInput && readyToJump) AttemptJump();
             downForce = 10;
@@ -110,10 +126,9 @@ public class Player : NetworkBehaviour
         }
         else
         {
-            if ((jumpInput && rb.velocity.y > 0) || activeGrapple) downForce = .5f;
+            if (jumpInput && rb.velocity.y > 0) downForce = .5f;
             else downForce = 10;
             rb.drag = 1;
-            if(activeGrapple) rb.drag = 0;
         }
     }
 
@@ -136,7 +151,6 @@ public class Player : NetworkBehaviour
     }
     private void AttemptMove(Vector2 moveInput)
     {
-        if (activeGrapple) return;
         moveDirection = cameraOrientation.forward * moveInput.y + cameraOrientation.right * moveInput.x;
         bool isMovingBackwards = Vector3.Dot(moveDirection, cameraOrientation.forward) < -.5f;
         float backwardsMultiplier = isMovingBackwards ? .25f : 1;
@@ -152,7 +166,6 @@ public class Player : NetworkBehaviour
 
     private void SpeedControl()
     {
-        if (activeGrapple) return;
         if (OnSlope())
         {
             Debug.Log("ONSLOPEEE");
@@ -184,39 +197,6 @@ public class Player : NetworkBehaviour
         readyToJump = true;
     }
 
-    public void ResetRestrictions()
-    {
-        activeGrapple = false;
-    } 
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(enableMovementOnNextTouch)
-        {
-            enableMovementOnNextTouch = false;
-            activeGrapple = false;
-            GetComponent<Grappling>().StopGrapple();
-        }
-    }
-
-    public bool activeGrapple;
-    bool enableMovementOnNextTouch;
-    public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight)
-    {
-        activeGrapple = true;
-        velocityToSet = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
-        Invoke(nameof(SetVelocity), 0.1f);
-    }
-
-    public bool isSwinging;
-
-    Vector3 velocityToSet;
-    void SetVelocity()
-    {
-        enableMovementOnNextTouch = true;
-        rb.velocity = velocityToSet;
-    }
-
     private bool OnSlope()
     {
         if (Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out slopeHit, Quaternion.identity, .5f, groundLayer))
@@ -231,19 +211,6 @@ public class Player : NetworkBehaviour
     private Vector3 GetSlopeMoveDirection()
     {
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
-    }
-
-    public Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight)
-    {
-        float gravity = Physics.gravity.y;
-        float displacementY = endPoint.y - startPoint.y;
-        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
-
-        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
-        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity)
-            + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
-
-        return velocityXZ + velocityY;
     }
 
 }
