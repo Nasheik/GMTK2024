@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetPlayer()
     {
-        player.TeleportPlayer(playerSpawn.position);
+        player.ResetPlayerPosition(playerSpawn.position);
     }
 
     void Update()

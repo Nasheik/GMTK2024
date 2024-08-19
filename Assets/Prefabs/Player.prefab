@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8160042322350551849}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CameraOrientation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5974889651538143187}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CameraTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 2107135149623915652}
   - component: {fileID: 2257603590199808511}
   - component: {fileID: 7507721625126893084}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 7254480015091295240}
   - component: {fileID: 4433437975660031914}
   - component: {fileID: 8388371676987936441}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,7 +289,7 @@ GameObject:
   - component: {fileID: 5325403937449056906}
   - component: {fileID: 5833101150928018981}
   - component: {fileID: 1930445613493968392}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,6 +364,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 448
   state: 0
+  checkpoint: {fileID: 0}
   floatHeight: 0.5
   floatForce: 100
   coyoteTime: 0.2

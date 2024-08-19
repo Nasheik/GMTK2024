@@ -41,7 +41,7 @@ public class Player : NetworkBehaviour
         air
     }
 
-
+    public Checkpoint checkpoint;
 
     private void Awake()
     {
@@ -160,9 +160,10 @@ public class Player : NetworkBehaviour
         else rb.AddForce(moveDirection * moveSpeed * airMultiplier, ForceMode.Force);
         SpeedControl();
     }
-    public void TeleportPlayer(Vector3 location)
+    public void ResetPlayerPosition(Vector3 location)
     {
-        rb.MovePosition(location);
+        if (checkpoint != null) rb.MovePosition(checkpoint.transform.position);
+        else rb.MovePosition(location);
     }
 
     private void SpeedControl()
