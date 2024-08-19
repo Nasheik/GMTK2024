@@ -475,6 +475,7 @@ MonoBehaviour:
   floatForce: 100
   coyoteTime: 0.2
   activeGrapple: 0
+  isSwinging: 0
 --- !u!54 &5325403937449056906
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -552,7 +553,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7251941188525203267}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b2e1a4fb1a65ae4e894742f051e8d22, type: 3}
   m_Name: 
@@ -566,7 +567,7 @@ MonoBehaviour:
   grappleDelayTime: 0.25
   overshootYAxis: 1
   grapplePoint: {x: 0, y: 0, z: 0}
-  lineRenderer: {fileID: 0}
+  lineRenderer: {fileID: 8412604970874791264}
   grappleCooldown: 1
 --- !u!1 &7814185245467442050
 GameObject:
