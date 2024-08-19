@@ -34,4 +34,14 @@ public class Input : MonoBehaviour
         Vector2 mouseDelta = playerInputActions.Player.Aim.ReadValue<Vector2>();
         return mouseDelta;
     }
+    public int GetGrappleInput()
+    {
+        int grappleInput = playerInputActions.Player.Grapple.WasPressedThisFrame() ? 1 : playerInputActions.Player.Grapple.WasReleasedThisFrame() ? -1 : 0;
+        return grappleInput;
+    }
+    public int GetSwingInput()
+    {
+        int swingInput = playerInputActions.Player.Swing.WasPressedThisFrame() ? 1 : playerInputActions.Player.Swing.WasReleasedThisFrame() ? -1 : 0;
+        return swingInput;
+    }
 }
