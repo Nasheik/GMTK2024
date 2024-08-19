@@ -100,12 +100,13 @@ public class Player : NetworkBehaviour
         {
             jumpInput = false;
             isGrounded = false;
-            rb.AddForce(Vector3.down * downForce * 10 , ForceMode.Force);
-            rb.AddForce(hit.normal * downForce * 30, ForceMode.Force);
+            rb.AddForce(3 * downForce * Vector3.down , ForceMode.Force);
+            rb.AddForce(10 * downForce * hit.normal, ForceMode.Force);
         }
         if(isOnSlime)
         {
-            rb.AddForce(hit.normal * jumpForce * 3, ForceMode.Impulse);
+            jumpInput = false;
+            rb.AddForce(3 * jumpForce * hit.normal, ForceMode.Impulse);
         }
 
         if (!jumpInput) downForce = 10;
