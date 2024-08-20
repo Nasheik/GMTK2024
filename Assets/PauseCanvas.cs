@@ -28,7 +28,6 @@ public class PauseCanvas : MonoBehaviour
         if (!isActive)
         {
             Time.timeScale = 1;
-            GameManager.instance.playerCamera.LockMouse();
         }
         else
         {

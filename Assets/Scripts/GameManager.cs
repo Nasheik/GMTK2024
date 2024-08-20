@@ -21,10 +21,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        playerCamera.UnlockMouse();
         Application.targetFrameRate = 60;
         if(!instance) instance = this;
         else Destroy(this);
-        Debug.unityLogger.logEnabled = false;
+        //Debug.unityLogger.logEnabled = false;
     }
 
     public void ResetPlayer()

@@ -17,14 +17,12 @@ public class PlayerCamera : MonoBehaviour
 
     private void Start()
     {
-        LockMouse();
+        //LockMouse();
+        UnlockMouse();
     }
 
     private void Update()
     {
-        if (Keyboard.current.qKey.wasPressedThisFrame) LockMouse();
-        if (Keyboard.current.eKey.wasPressedThisFrame) UnlockMouse();
-
         if (!input) return;
         Vector2 aimInput = input.GetMouseDelta();
         if (aimInput != Vector2.zero) AttemptAim(aimInput);

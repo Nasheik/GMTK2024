@@ -5078,7 +5078,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 486804536}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -12532,7 +12532,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c45d552f2a5c85f408496f4ee4f6c864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startHostButton: {fileID: 1844417772}
+  canvas: {fileID: 486804539}
+  stopClientButton: {fileID: 1844417772}
   startClientButton: {fileID: 2021344529}
 --- !u!4 &1304272435 stripped
 Transform:
