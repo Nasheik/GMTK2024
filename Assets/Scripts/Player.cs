@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Player : NetworkBehaviour
+public class Player : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Transform cameraOrientation;
@@ -60,7 +60,7 @@ public class Player : NetworkBehaviour
     }
     private void FixedUpdate()
     {
-        if (!IsOwner) return;
+        //if (!IsOwner) return;
         Vector2 moveInput = input.GetMovementVectorNormalized();
         if (isOnIce) moveInput = Vector2.zero;
         isWalking = moveInput != Vector2.zero;
