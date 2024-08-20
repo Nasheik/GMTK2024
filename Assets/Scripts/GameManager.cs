@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
         if(!instance) instance = this;
         else Destroy(this);
+        Debug.unityLogger.logEnabled = false;
     }
 
     public void ResetPlayer()
@@ -35,19 +36,7 @@ public class GameManager : MonoBehaviour
         player.goldFlags[0] = false;
         player.goldFlags[1] = false;
         player.goldFlags[2] = false;
+        player.checkpoint = null;
         player.ResetPlayerPosition(playerSpawn.position);
-    }
-
-    void Update()
-    {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            pauseCanvas.SetActive(!pauseCanvas.isActive);
-        }
-        if (Keyboard.current.rKey.wasPressedThisFrame)
-        {
-            if(Keyboard.current.ctrlKey.isPressed) FullResetPlayer();
-            else ResetPlayer();
-        }
     }
 }

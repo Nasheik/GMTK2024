@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : NetworkBehaviour
 {
@@ -43,25 +44,77 @@ public class Player : NetworkBehaviour
 
     public Checkpoint checkpoint;
 
-    private void Awake()
+
+    public MeshRenderer meshRenderer1;
+    public MeshRenderer meshRenderer2;
+    public CapsuleCollider capsuleCollider;
+
+    NetworkManager networkManager;
+
+    private void Start()
     {
+        if (!IsOwner)
+        {
+            rb.isKinematic = true;
+            capsuleCollider.enabled = false;
+
+            Color c1 = meshRenderer1.material.color;
+            c1.a = .1f;
+            meshRenderer1.material.color = c1;
+
+            Color c2 = meshRenderer2.material.color;
+            c2.a = .1f;
+            meshRenderer2.material.color = c2;
+
+            return;
+        }
+        networkManager = NetworkManager.Singleton;
         input = GameManager.instance.input;
         GameManager.instance.moveCamera.cameraTarget = cameraTarget;
         GameManager.instance.playerCamera.orientation = cameraOrientation;
         GameManager.instance.playerCamera.input = input;
         GameManager.instance.player = this;
         GameManager.instance.ResetPlayer();
-    }
-
-    private void Start()
-    {
         rb.freezeRotation = true;
         readyToJump = true;
     }
+
+    private void OnApplicationQuit()
+    {
+        if (!IsOwner) return;
+        if (networkManager.IsConnectedClient)
+        {
+            networkManager.Shutdown(true);
+            networkManager.DisconnectClient(networkManager.LocalClientId);
+        }
+    }
+
+    private void Update()
+    {
+        if (!IsOwner) return;
+        if (input.GetPauseInput())
+        {
+            GameManager.instance.pauseCanvas.SetActive(!GameManager.instance.pauseCanvas.isActive);
+        }
+        if (input.GetRestartInput())
+        {
+            if (Keyboard.current.ctrlKey.isPressed) GameManager.instance.FullResetPlayer();
+            else GameManager.instance.ResetPlayer();
+        }
+        if (input.GetFRestartInput())
+        {
+            GameManager.instance.FullResetPlayer();
+        }
+    }
+
     private void FixedUpdate()
     {
         if (!IsOwner) return;
-        Vector2 moveInput = input.GetMovementVectorNormalized();
+        transform.eulerAngles = Vector3.up * GameManager.instance.playerCamera.transform.eulerAngles.y;
+
+
+
+        Vector2 moveInput = GameManager.instance.input.GetMovementVectorNormalized();
         if (isOnIce) moveInput = Vector2.zero;
         isWalking = moveInput != Vector2.zero;
         if (isWalking) AttemptMove(moveInput);
@@ -79,7 +132,7 @@ public class Player : NetworkBehaviour
             rb.AddForce(Vector3.up * diff * floatForce, ForceMode.Force);
         }
 
-        if(transform.position.y<-5) GameManager.instance.ResetPlayer();
+        if (transform.position.y < -5) GameManager.instance.ResetPlayer();
 
         StateHandler();
 
@@ -94,6 +147,8 @@ public class Player : NetworkBehaviour
     bool isOnIce;
     public bool[] goldFlags;
     public Checkpoint goldCheckpoint;
+
+    public Transform glasses;
     void GroundCheck()
     {
         isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .5f, groundLayer);
@@ -104,7 +159,7 @@ public class Player : NetworkBehaviour
 
         bool jumpInput = input.GetJumpInput();
 
-        if(isOnWater && (!goldFlags[0] || !goldFlags[1] || !goldFlags[2]))
+        if (isOnWater && (!goldFlags[0] || !goldFlags[1] || !goldFlags[2]))
         {
             GameManager.instance.ResetPlayer();
         }
@@ -181,8 +236,9 @@ public class Player : NetworkBehaviour
     }
     public void ResetPlayerPosition(Vector3 location)
     {
+        if (!IsOwner) return;
         rb.velocity = Vector3.zero;
-        if(goldFlags[0] && goldFlags[1] && goldFlags[2]) rb.MovePosition(goldCheckpoint.transform.position);
+        if (goldFlags[0] && goldFlags[1] && goldFlags[2]) rb.MovePosition(goldCheckpoint.transform.position);
         else if (checkpoint != null) rb.MovePosition(checkpoint.transform.position);
         else rb.MovePosition(location);
     }

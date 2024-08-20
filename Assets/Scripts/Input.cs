@@ -44,4 +44,20 @@ public class Input : MonoBehaviour
         int swingInput = playerInputActions.Player.Swing.WasPressedThisFrame() ? 1 : playerInputActions.Player.Swing.WasReleasedThisFrame() ? -1 : 0;
         return swingInput;
     }
+
+    public bool GetPauseInput()
+    {
+        bool input = playerInputActions.Player.Pause.WasPressedThisFrame();
+        return input;
+    }
+    public bool GetRestartInput()
+    {
+        bool input = playerInputActions.Player.Restart.WasPressedThisFrame();
+        return input;
+    }
+    public bool GetFRestartInput()
+    {
+        bool input = playerInputActions.Player.FRestart.WasPerformedThisFrame();
+        return input;
+    }
 }
