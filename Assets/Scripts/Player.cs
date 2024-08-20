@@ -59,11 +59,12 @@ public class Player : NetworkBehaviour
             capsuleCollider.enabled = false;
 
             Color c1 = meshRenderer1.material.color;
-            c1.a = .1f;
+            c1.a = .3f;
             meshRenderer1.material.color = c1;
 
+
             Color c2 = meshRenderer2.material.color;
-            c2.a = .1f;
+            c2.a = .6f;
             meshRenderer2.material.color = c2;
 
             return;
