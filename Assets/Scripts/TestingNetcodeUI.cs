@@ -20,7 +20,7 @@ public class TestingNetcodeUI : MonoBehaviour
 
         startClientButton.onClick.AddListener(() =>
         {
-            Debug.Log("HOST");
+            Debug.Log("CLIENT");
             NetworkManager.Singleton.StartClient();
             Hide();
         });
@@ -28,7 +28,7 @@ public class TestingNetcodeUI : MonoBehaviour
 
     private void Start()
     {
-        startHostButton.onClick.Invoke();
+        startClientButton.onClick.Invoke();
     }
 
     private void Hide()
