@@ -6,24 +6,48 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     [SerializeField] Transform playerSpawn;
     [HideInInspector] public Player player;
+
+
+    public Input input;
+    public MoveCamera moveCamera;
+    public PlayerCamera playerCamera;
+
+    public PauseCanvas pauseCanvas;
 
 
     private void Awake()
     {
         Application.targetFrameRate = 60;
-        DontDestroyOnLoad(gameObject);
+        if(!instance) instance = this;
+        else Destroy(this);
     }
 
     public void ResetPlayer()
     {
         player.ResetPlayerPosition(playerSpawn.position);
     }
+    public void FullResetPlayer()
+    {
+        player.goldFlags[0] = false;
+        player.goldFlags[1] = false;
+        player.goldFlags[2] = false;
+        player.ResetPlayerPosition(playerSpawn.position);
+    }
 
     void Update()
     {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame) Application.Quit();
-        if (Keyboard.current.rKey.wasPressedThisFrame) ResetPlayer();
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            pauseCanvas.SetActive(!pauseCanvas.isActive);
+        }
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            if(Keyboard.current.ctrlKey.isPressed) FullResetPlayer();
+            else ResetPlayer();
+        }
     }
 }

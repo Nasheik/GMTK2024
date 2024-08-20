@@ -7,8 +7,8 @@ using UnityEngine.Windows;
 public class PlayerCamera : MonoBehaviour
 {
 
-    [SerializeField] private float xSensitivity = 400;
-    [SerializeField] private float ySensitivity = 400;
+    public float xSensitivity = 40;
+    public float ySensitivity = 40;
     public Transform orientation;
     private float xRotation;
     private float yRotation;
@@ -17,7 +17,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Start()
     {
-        UnlockMouse();
+        LockMouse();
     }
 
     private void Update()
@@ -30,12 +30,12 @@ public class PlayerCamera : MonoBehaviour
         if (aimInput != Vector2.zero) AttemptAim(aimInput);
     }
 
-    private void LockMouse()
+    public void LockMouse()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    private void UnlockMouse()
+    public void UnlockMouse()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

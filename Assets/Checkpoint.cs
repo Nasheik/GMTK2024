@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
+    public int goldIndex = -1;
+
     [SerializeField] Transform flagTransform;
     [SerializeField] MeshRenderer flagMeshRenderer;
 
@@ -21,16 +23,18 @@ public class Checkpoint : MonoBehaviour
 
     public void SetActive(bool isActive)
     {
-        flagTransform.localPosition= isActive ? onPosition : offPosition;
+        flagTransform.localPosition = isActive ? onPosition : offPosition;
         flagMeshRenderer.material.color = isActive ? onColor : offColor;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             Player player = other.gameObject.GetComponentInParent<Player>();
-            if (player.checkpoint != null) player.checkpoint.SetActive(false);
+            if (goldIndex >= 0) player.goldFlags[goldIndex] = true;
+            if (player.checkpoint != null && player.checkpoint.goldIndex < 0) player.checkpoint.SetActive(false);
+            if (goldIndex == 2) player.goldCheckpoint = this;
             player.checkpoint = this;
             SetActive(true);
         }

@@ -45,12 +45,12 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
-        input = FindObjectOfType<Input>();
-        FindObjectOfType<MoveCamera>().cameraTarget = cameraTarget;
-        FindObjectOfType<PlayerCamera>().orientation = cameraOrientation;
-        FindObjectOfType<PlayerCamera>().input = input;
-        FindAnyObjectByType<GameManager>().player = this;
-        FindAnyObjectByType<GameManager>().ResetPlayer();
+        input = GameManager.instance.input;
+        GameManager.instance.moveCamera.cameraTarget = cameraTarget;
+        GameManager.instance.playerCamera.orientation = cameraOrientation;
+        GameManager.instance.playerCamera.input = input;
+        GameManager.instance.player = this;
+        GameManager.instance.ResetPlayer();
     }
 
     private void Start()
@@ -79,6 +79,8 @@ public class Player : NetworkBehaviour
             rb.AddForce(Vector3.up * diff * floatForce, ForceMode.Force);
         }
 
+        if(transform.position.y<-5) GameManager.instance.ResetPlayer();
+
         StateHandler();
 
         GroundCheck();
@@ -90,14 +92,22 @@ public class Player : NetworkBehaviour
     float timeAtLastGround;
     Vector3 positionAtLastGround;
     bool isOnIce;
+    public bool[] goldFlags;
+    public Checkpoint goldCheckpoint;
     void GroundCheck()
     {
         isGrounded = Physics.BoxCast(transform.position + Vector3.up * .5f, Vector3.one / 4, Vector3.down, out RaycastHit hit, Quaternion.identity, .5f, groundLayer);
+        bool isOnWater = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Water");
         bool isOnMountain = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Mountain");
         bool isOnSlime = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Slime");
         isOnIce = hit.collider && hit.collider.gameObject.layer == LayerMask.NameToLayer("Ice");
 
         bool jumpInput = input.GetJumpInput();
+
+        if(isOnWater && (!goldFlags[0] || !goldFlags[1] || !goldFlags[2]))
+        {
+            GameManager.instance.ResetPlayer();
+        }
 
         if (isOnMountain)
         {
@@ -171,7 +181,9 @@ public class Player : NetworkBehaviour
     }
     public void ResetPlayerPosition(Vector3 location)
     {
-        if (checkpoint != null) rb.MovePosition(checkpoint.transform.position);
+        rb.velocity = Vector3.zero;
+        if(goldFlags[0] && goldFlags[1] && goldFlags[2]) rb.MovePosition(goldCheckpoint.transform.position);
+        else if (checkpoint != null) rb.MovePosition(checkpoint.transform.position);
         else rb.MovePosition(location);
     }
 

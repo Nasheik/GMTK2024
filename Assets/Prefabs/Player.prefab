@@ -362,12 +362,13 @@ MonoBehaviour:
   input: {fileID: 0}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 1472
+    m_Bits: 1488
   state: 0
   checkpoint: {fileID: 0}
   floatHeight: 0.5
   floatForce: 100
   coyoteTime: 0.2
+  goldFlags: 000000
 --- !u!54 &5325403937449056906
 Rigidbody:
   m_ObjectHideFlags: 0
