@@ -9,7 +9,8 @@ pipeline {
                 echo "Building.."
                 bat ''' 
                 cd Assets/Scripts
-                echo $(GameManager.cs)
+                @echo off
+                type GameManager.cs
                 '''
             }
         }
