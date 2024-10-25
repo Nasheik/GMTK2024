@@ -1,12 +1,15 @@
 pipeline {
     agent any
-
+    triggers {
+        pollSCM '* * * * *'
+    }
     stages {
         stage('Build') {
             steps {
                 echo "Building.."
                 bat ''' 
-                echo "Building" 
+                cd Assets/Scripts
+                echo GameManager.cs
                 '''
             }
         }
