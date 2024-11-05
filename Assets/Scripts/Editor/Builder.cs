@@ -10,7 +10,7 @@ public class WebGLBuilder
     [MenuItem("MyTools/Build")]
     public static void BuildGame()
     {
-        string path = "C:\\Users\\Admin\\Desktop\\CleaningTheSystemBuilds\\";
+        string path = "\\";
         string[] scenes = new string[SceneManager.sceneCountInBuildSettings];
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
         {
