@@ -16,7 +16,7 @@ public class WebGLBuilder
         {
             scenes[i] = System.IO.Path.GetFullPath(SceneUtility.GetScenePathByBuildIndex(i));
         }
-
+        print(path);
         //BuildPipeline.BuildPlayer(scenes, path + "Web\\", BuildTarget.WebGL, BuildOptions.Development);
         // BuildPipeline.BuildPlayer(scenes, path + "Linux\\CTS.x86_64", BuildTarget.StandaloneLinux64, BuildOptions.None);
         BuildPipeline.BuildPlayer(scenes, path + "Windows\\CTS.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
