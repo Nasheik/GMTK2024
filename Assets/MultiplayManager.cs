@@ -42,17 +42,8 @@ public class MultiplayManager : MonoBehaviour
             {
                 serverQueryHandler.CurrentPlayers = (ushort)NetworkManager.Singleton.ConnectedClientsIds.Count;
                 serverQueryHandler.UpdateServerCheck();
-                await Task.Delay(1000);
+                await Task.Delay(100);
             }
         }
-    }
-
-    public void JoinToServer()
-    {
-        UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-
-        transport.SetConnectionData("34.16.85.176", ushort.Parse("9000"));
-
-        NetworkManager.Singleton.StartClient();
     }
 }

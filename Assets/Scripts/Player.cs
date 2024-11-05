@@ -45,6 +45,7 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
+        if (!IsOwner) return;
         input = GameManager.instance.input;
         GameManager.instance.moveCamera.cameraTarget = cameraTarget;
         GameManager.instance.playerCamera.orientation = cameraOrientation;
@@ -55,6 +56,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        if (!IsOwner) return;
         rb.freezeRotation = true;
         readyToJump = true;
     }
@@ -181,6 +183,7 @@ public class Player : NetworkBehaviour
     }
     public void ResetPlayerPosition(Vector3 location)
     {
+        if (!IsOwner) return;
         rb.velocity = Vector3.zero;
         if(goldFlags[0] && goldFlags[1] && goldFlags[2]) rb.MovePosition(goldCheckpoint.transform.position);
         else if (checkpoint != null) rb.MovePosition(checkpoint.transform.position);
