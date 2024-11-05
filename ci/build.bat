@@ -1,4 +1,4 @@
-set UNITY_CMD="C:\Program Files\Unity\Hub\Editor\2020.3.26f1\Editor\Unity.exe"
+set UNITY_CMD="C:\Program Files\Unity\Hub\Editor\2022.3.16f1\Editor\Unity.exe"
 set UNITY_DIR="GMTK2024"
 
 %UNITY_CMD% ^
