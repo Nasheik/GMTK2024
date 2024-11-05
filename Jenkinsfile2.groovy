@@ -22,6 +22,7 @@ pipeline {
             steps {
                 // Run before script and test script using PowerShell
                 bat '''
+                    echo hello
                     GMTK2024/ci/build.bat
                 '''
             }
