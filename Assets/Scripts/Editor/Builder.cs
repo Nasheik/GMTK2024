@@ -12,7 +12,7 @@ public class WebGLBuilder
     {
         string path = Application.dataPath + "/../../Builds/";
         string[] scenes = new string[SceneManager.sceneCountInBuildSettings];
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        for (int i = 1; i < SceneManager.sceneCountInBuildSettings; i++)
         {
             scenes[i] = System.IO.Path.GetFullPath(SceneUtility.GetScenePathByBuildIndex(i));
         }
