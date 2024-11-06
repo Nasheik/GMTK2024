@@ -3,12 +3,13 @@ setlocal enabledelayedexpansion
 
 
 set CODE_COVERAGE_PACKAGE=com.unity.testtools.codecoverage
-set PACKAGE_MANIFEST_PATH=Packages\manifest.json
+set PACKAGE_MANIFEST_PATH=GMTK2024\Packages\manifest.json
 set CI_PROJECT_NAME="TestCI"
 :: Unity test command
 set UNITY_CMD="C:\Program Files\Unity\Hub\Editor\2022.3.16f1\Editor\Unity.exe"
 set UNITY_DIR="GMTK2024"
 set TEST_PLATFORM=StandaloneWindows64
+set TESTING_TYPE=JUNIT
 
 echo Testing for %TEST_PLATFORM%, Unit Type: %TESTING_TYPE%
 
