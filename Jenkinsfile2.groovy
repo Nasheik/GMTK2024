@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    // https://github.com/jenkinsci/gitlab-plugin#declarative-pipeline-jobs
+
+
     environment {
         BUILD_NAME = 'Testing'
         UNITY_DIR = "./GMTK2024/"
